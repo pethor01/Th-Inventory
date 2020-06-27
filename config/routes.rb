@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       get 'stores', to: 'stores#index'
+      get 'store/:id', to: 'stores#show'
     end
   end
   get '/*path' => 'homepage#index'

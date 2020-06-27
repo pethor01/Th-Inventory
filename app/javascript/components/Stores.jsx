@@ -1,20 +1,25 @@
 import React from "react";
 import { Link } from "react-router-dom"
+import Store from "../components/Store"
 
 class Stores extends React.Component {
     constructor(props) {
       super(props);
-      this.state = {
-        stores: []
-      };
+      this.state = { stores: []};
+      
     }
 
+    ShowClick = (id) => {
+      console.log("hehehehe")
+      console.log(id);
+      return <Store id={id} />
+    }
     componentDidMount() {
         const url = "/api/v1/stores";
         fetch(url)
             .then(response => {
                 if (response.ok){
-                    return response.json();
+                  return response.json();
                 }
                 throw new Error("Network response was not ok.");
             })
@@ -28,11 +33,14 @@ class Stores extends React.Component {
       const AllStores = stores.map((store, index) => (
         <div key={index} className="col-md-6 col-lg-4">
           <div className="card mb-4">
-            <div className="container">
-              {store.name}
-            </div>
+            <h3 className="card-header"> {store.name}</h3>
           <div className="card-body">
-
+            {store.address}
+            <div className="mt-3"> 
+              <Store id={store.id} >
+                View
+              </Store>
+            </div>
           </div>
           </div>
         </div>
@@ -49,7 +57,7 @@ class Stores extends React.Component {
         <>
           <section className="jumbotron jumbotron-fluid text-center">
             <div className="container py-5">
-              <h1 className="display-4">Recipes for every occasion</h1>
+              <h1 className="display-4">Tropical Hut Stores</h1>
               <p className="lead text-muted">
                 We’ve pulled together our most popular recipes, our latest
                 additions, and our editor’s picks, so there’s sure to be something
@@ -67,7 +75,7 @@ class Stores extends React.Component {
             <div className="row">
               {stores.length > 0 ? AllStores : NoStore}
             </div>
-            <Link to="/" className="btn btn-link">
+            <Link to="/" className="btn btn-outline-primary">
               Home
             </Link>
           </main>
