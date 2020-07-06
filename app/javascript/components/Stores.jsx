@@ -1,31 +1,47 @@
 import React from "react";
 import { Link } from "react-router-dom"
 import Store from "../components/Store"
+import CreateStore from "../components/CreateStore"
+import Pagination from "react-js-pagination"
+
 
 class Stores extends React.Component {
     constructor(props) {
       super(props);
-      this.state = { stores: []};
+      this.state = {  stores: [],
+                      activePage: 1
+      };
       
     }
 
-    ShowClick = (id) => {
-      console.log("hehehehe")
-      console.log(id);
-      return <Store id={id} />
-    }
+  handleSubmit = (newstore) => {
+    console.log(newstore);
+    console.log("wawi")
+    // Add the new created store in array
+    this.setState({ stores: [newstore, ...this.state.stores] })
+
+  }
+
+  handlePageChange(pageNumber) {
+    console.log(`active page is ${pageNumber}`);
+    this.setState({activePage: pageNumber});
+  }
+
+    // ShowClick = (id) => {
+    //   console.log("hehehehe")
+    //   console.log(id);
+    //   return <Store id={id} />
+    // }
     componentDidMount() {
         const url = "/api/v1/stores";
         fetch(url)
-            .then(response => {
-                if (response.ok){
-                  return response.json();
-                }
+          .then(response => {
+              if (response.ok){
+                return response.json();
+              }
                 throw new Error("Network response was not ok.");
-            })
-            .then(response => this.setState({stores: response},
-              console.log(response) )
-            )
+          })
+            .then(response => this.setState({stores: response}))
             .catch(() => this.props.history.push("/"));
     }
     render(){
@@ -33,7 +49,7 @@ class Stores extends React.Component {
       const AllStores = stores.map((store, index) => (
         <div key={index} className="col-md-6 col-lg-4">
           <div className="card mb-4">
-            <h3 className="card-header"> {store.name}</h3>
+          <h3 className="card-header"> {store.name} {index}</h3>
           <div className="card-body">
             {store.address}
             <div className="mt-3"> 
@@ -44,6 +60,7 @@ class Stores extends React.Component {
           </div>
           </div>
         </div>
+      
       ));
       const NoStore = (
         <div className="vw-100 vh-50 d-flex align-items-center justify-content-center">
@@ -68,12 +85,20 @@ class Stores extends React.Component {
         <div className="py-5">
           <main className="container">
             <div className="text-right mb-3">
-              <Link to="/recipe" className="btn custom-button">
-                Create New Recipe
-              </Link>
+              <CreateStore handleSubmit={this.handleSubmit}/>
             </div>
             <div className="row">
               {stores.length > 0 ? AllStores : NoStore}
+            </div>
+            <div>
+              <Pagination
+                activePage={this.state.activePage}
+                itemsCountPerPage={10}
+                totalItemsCount={stores.length}
+                pageRangeDisplayed={10}
+                onChange={this.handlePageChange.bind(this)}
+              />
+              <h4>{stores.length}</h4>
             </div>
             <Link to="/" className="btn btn-outline-primary">
               Home

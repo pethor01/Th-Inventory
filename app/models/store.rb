@@ -1,9 +1,6 @@
 class Store < ApplicationRecord
+    validates_presence_of :name, :address, :contact_no
 
-    def self.test_drive
-        p "awtss"
-    end
-    
     def self.create_stores
         store_names = ["TH-Alabang", "TH-FTI", "TH-Riverbanks"]
         address = ["Alabang", "FTI Taguig City", "Riverbank Marikina"]

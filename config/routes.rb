@@ -5,6 +5,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       get 'stores', to: 'stores#index'
       get 'store/:id', to: 'stores#show'
+      post 'create_store', to: 'stores#create'
     end
   end
   get '/*path' => 'homepage#index'

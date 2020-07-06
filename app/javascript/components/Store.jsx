@@ -43,7 +43,7 @@ class Store extends React.Component {
         }
         return(
             <div>
-                <button className="btn btn-outline-success" onClick={this.showClicked}>
+                <button className="btn custom-button" onClick={this.showClicked}>
                     View
                 </button>
             </div>
