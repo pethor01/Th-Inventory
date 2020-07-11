@@ -1,6 +1,9 @@
 class Api::V1::StoresController < ApplicationController
     def index
-        stores = Store.all.order('created_at desc')
+        page = params[:page]
+        
+        stores = Store.order('created_at desc').page(page).per(10)
+        # stores_count = Store.all.count
         render json: stores
     end
 
@@ -12,6 +15,12 @@ class Api::V1::StoresController < ApplicationController
             render json: store.errors
         end
     end
+
+    def totalStores
+        total_stores = Store.all.count
+        render json: total_stores
+    end
+    
 
     def show
         if find_store
