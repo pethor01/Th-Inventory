@@ -31,11 +31,9 @@ class NewStore extends React.Component{
         event.preventDefault();
         const url = "/api/v1/create_store";
         const { name, address, contact_no} = this.state
-        alert(contact_no)
         if (name.length == 0 || address.length == 0 || contact_no.length == 0) 
             return;
         const body = {name, address, contact_no};
-
         const token = document.querySelector('meta[name="csrf-token"]').content;
         fetch(url,{
             method: "POST",
@@ -54,7 +52,8 @@ class NewStore extends React.Component{
         })
             .then(response => this.props.handleSubmit(response))
             .catch(error => console.log(error.message));  
-        this.handleSubmit
+        event.target.reset();
+        this.setState({contact_no: ""})
     }
     render(){
         return(
@@ -67,7 +66,7 @@ class NewStore extends React.Component{
                         <div className="modal-content">
                             <form onSubmit={this.submitStore} >
                             <div className="modal-header">
-                                <h5 className="modal-title" id="exampleModalCenteredLabel">Create Store</h5>
+                                <h5 className="modal-title" id="StoreModalTitle">Create Store</h5>
                                 <button type="button" className="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
@@ -88,7 +87,7 @@ class NewStore extends React.Component{
                                         </div>
                                     </div>
                             </div>
-                            <div className="modal-footer">
+                            <div id="btnOption" className="modal-footer">
                                 <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
                                 <button type="submit" className="btn btn-success">Save</button>
                             </div>
@@ -102,3 +101,4 @@ class NewStore extends React.Component{
 }
 
 export default NewStore;
+

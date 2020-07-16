@@ -3,28 +3,51 @@ import { Link } from "react-router-dom"
 import Store from "../components/Store"
 import CreateStore from "../components/CreateStore"
 import Pagination from "react-js-pagination";
+import $ from "jquery";
+
 
 export default function Stores (){
   const [stores, setStores] = useState([])
   const [totalStores, setTotalStores] =  useState(0)
   const [activePage, SetActivePage] = useState(1)
 
-
-
-  function handleSubmit(newstore) {
-    console.log(newstore);
-    console.log("wawi")
+  function handleSubmit() {
     // Add the new created store in array
-    this.getStores()
+    $("#exampleModal").modal("hide");
+    getStores()
+  }
+
+  function handleUpdate(store) {
+    console.log('awit', store)
+    console.log(store.id)
+    // /api/v1/updateStore/:id(.:format)
+    const body = store
+    const token = document.querySelector('meta[name="csrf-token"]').content;	
+    const url = `/api/v1/updateStore/${store.id}`
+    fetch(url,{
+      method: "PUT",
+      headers: {
+          "X-CSRF-Token": token,
+          "Content-Type": "application/json"   
+      },
+      body: JSON.stringify(body)
+      })
+      .then(response => {
+          if (response.ok){
+            return response.json();
+          }
+            throw new Error("Network response was not ok.");
+      })
+        .then(response => getStores(response))
+        .catch(response => console.log(response))
   }
 
   function handlePageChange(pageNumber) {
-    console.log(`active page is ${pageNumber}`)
     SetActivePage(pageNumber)
   }
 
   function getTotalStores(){
-    const url = "/api/v1/totalStores";
+    const url = "/api/v1/totalStores"
     fetch(url)
       .then(response => {
           if (response.ok){
@@ -57,20 +80,16 @@ export default function Stores (){
   useEffect(()=> {
     getTotalStores()
     getStores()
-    console.log(activePage)
-    console.log(stores)
-
   }, [activePage])
+
   const AllStores = stores.map((store, index) => (
     <div key={index} className="col-md-6 col-lg-4">
       <div className="card mb-4">
-      <h3 className="card-header"> {store.name}</h3>
+        <h3 className="card-header"> {store.name}</h3>
       <div className="card-body">
         {store.address}
         <div className="mt-3"> 
-          <Store id={store.id} >
-            View
-          </Store>
+          <Store dataStore={store} activePage={activePage} handleUpdate={handleUpdate} ></Store>
         </div>
       </div>
       </div>

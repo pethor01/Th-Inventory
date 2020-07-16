@@ -7,6 +7,7 @@ Rails.application.routes.draw do
       get 'totalStores', to: 'stores#totalStores'
       get 'store/:id', to: 'stores#show'
       post 'create_store', to: 'stores#create'
+      put 'updateStore/:id', to: 'stores#update'
 
     end
   end

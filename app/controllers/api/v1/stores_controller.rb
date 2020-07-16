@@ -16,6 +16,12 @@ class Api::V1::StoresController < ApplicationController
         end
     end
 
+    def update
+        store = Store.find(params[:id])
+        store.update(store_params)
+        render json: store        
+    end
+    
     def totalStores
         total_stores = Store.all.count
         render json: total_stores
@@ -34,7 +40,7 @@ class Api::V1::StoresController < ApplicationController
     private
 
     def store_params
-        params.permit(:name, :address, :contact_no)   
+        params.require(:store).permit(:name, :address, :contact_no)   
     end
     
     def find_store
