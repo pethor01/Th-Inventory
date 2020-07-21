@@ -3,6 +3,8 @@ import { Link } from "react-router-dom"
 import Store from "../components/Store"
 import CreateStore from "../components/CreateStore"
 import Pagination from "react-js-pagination";
+import Navbar from "../components/Navbar";
+import { useLocation } from 'react-router'
 import $ from "jquery";
 
 
@@ -10,6 +12,7 @@ export default function Stores (){
   const [stores, setStores] = useState([])
   const [totalStores, setTotalStores] =  useState(0)
   const [activePage, SetActivePage] = useState(1)
+  let location = useLocation()
 
   function handleSubmit() {
     // Add the new created store in array
@@ -75,7 +78,7 @@ export default function Stores (){
     } catch (error) {
       console.log(error)
     }
-    
+    console.log(location.pathname)
   }
   useEffect(()=> {
     getTotalStores()
@@ -107,6 +110,7 @@ export default function Stores (){
 
   return(
     <>
+      <Navbar location={location.pathname}/>
       <section className="jumbotron jumbotron-fluid text-center">
             <div className="container py-5">
               <h1 className="display-4">Tropical Hut Stores</h1>
@@ -131,7 +135,6 @@ export default function Stores (){
                 pageRangeDisplayed={5}
                 onChange={handlePageChange}
               />
-              <p>{stores.length}</p>
             </div>
             <Link to="/" className="btn btn-outline-primary">
               Home

@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react'
+import { MDBInput,  MDBCol } from 'mdbreact';
 import $ from "jquery";
 
 export default function Store ({ dataStore, activePage, handleUpdate, getStores }){
@@ -9,14 +10,13 @@ export default function Store ({ dataStore, activePage, handleUpdate, getStores 
     const [idStore, SetIdStore] = useState("")
 
     function showClicked  () { 
-        SetIsClicked(true);
+        SetIsClicked(true)
         SetName(dataStore.name)
         SetAddress(dataStore.address)
         SetContactNo(dataStore.contact_no)
         SetIdStore(dataStore.id)        
-        
-        
-    }   
+    }  
+
     useEffect(() => {
         if (isClicked) {
             callViewModal()
@@ -52,22 +52,24 @@ export default function Store ({ dataStore, activePage, handleUpdate, getStores 
                     </div>
                     <div className="modal-body">
                         <div className="container ">
-                            <div className=" row form-group ">
-                                <label htmlFor="store_name">Store Name:</label>
-                                <input type="text" id="storeName" name="name" className="form-control"  value={name} onChange={(e)=> SetName(e.target.value)} required/>
-                            </div>
-                            <div className=" row form-group ">
-                                <label htmlFor="store_address">Store Address:</label>
-                                <textarea id="storeAddress" name="address" type="text" className="form-control" value={address} onChange={(e)=> SetAddress(e.target.value)}required />
-                            </div>
-                            <div className=" row form-group ">
-                                <label htmlFor="contact_no">Contact Number:</label>
-                                 <input type="text" id="contactNo" name="contact_no" pattern="[0-9]*" value={contactNo} onChange={(event) => SetContactNo(event.target.value.replace(/\D/,''))} name="contact_no" className="form-control" required/>
-                            </div>
+                            <MDBInput
+                                label="Store name"
+                                group
+                                type="text"
+                                validate
+                                error="wrong"
+                                success="right"
+                                value={name}
+                                onChange={(e)=> SetName(e.target.value)}
+                                required
+                            />
+                            <MDBInput id="storeAddress" type="textarea" label="Store Address:" rows="5" value={address} onChange={(e)=> SetAddress(e.target.value)} required/>
+                            <MDBInput id="contactNo" type="text" label="Contact Number:" value={contactNo} onChange={(event) => SetContactNo(event.target.value.replace(/\D/,''))} name="contact_no" required/>
                         </div>
                     </div>        
                     <div id="" className="modal-footer">
-                        <button type="button" className="btn btn-secondary" onClick={resetModalData} >Close</button>
+                        <button type="button" className="btn blue-grey text-white" onClick={resetModalData} >Close</button>
+                        <button type="button" className="btn btn-danger" >Delete</button>
                         <button type="submit" className="btn btn-success">Update</button>
                     </div>
                 </form>
@@ -79,7 +81,6 @@ export default function Store ({ dataStore, activePage, handleUpdate, getStores 
     function callViewModal() {
         $("#ViewModal").modal("show");
     }
-
         return(
             <>
                 <div>{isClicked ?  ViewModal : ''}</div>
