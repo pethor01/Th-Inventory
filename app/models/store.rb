@@ -1,4 +1,5 @@
 class Store < ApplicationRecord
+    has_many :services
     validates_presence_of :name, :address, :contact_no
 
     def self.create_stores

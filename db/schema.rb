@@ -10,15 +10,28 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_15_074349) do
+ActiveRecord::Schema.define(version: 2020_07_27_093332) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
+  create_table "services", force: :cascade do |t|
+    t.bigint "store_id"
+    t.string "service_type"
+    t.date "service_date"
+    t.time "time_in"
+    t.time "time_out"
+    t.text "description"
+    t.decimal "amount", precision: 20, scale: 2
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["store_id"], name: "index_services_on_store_id"
+  end
+
   create_table "stores", force: :cascade do |t|
     t.string "name"
     t.text "address"
-    t.integer "contact_no"
+    t.string "contact_no"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end

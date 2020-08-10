@@ -1,10 +1,9 @@
 class Api::V1::StoresController < ApplicationController
     def index
+        total_stores = Store.all.length
         page = params[:page]
-        
-        stores = Store.order('created_at desc').page(page).per(10)
-        # stores_count = Store.all.count
-        render json: stores
+        stores = Store.order('created_at desc').page(page).per(12)
+        render json: {stores: stores, total_stores: total_stores}
     end
 
     def create
@@ -17,16 +16,23 @@ class Api::V1::StoresController < ApplicationController
     end
 
     def update
-        store = Store.find(params[:id])
-        store.update(store_params)
-        render json: store        
+        if find_store
+            @store.update(store_params)
+            render json: @store 
+        else
+            p find_store.errors
+            render json: find_store.errors
+        end                 
     end
     
-    def totalStores
-        total_stores = Store.all.count
-        render json: total_stores
+    def delete
+        if find_store
+            @store.delete
+        else
+            p find_store.errors
+            render json: find_store.errors
+        end        
     end
-    
 
     def show
         if find_store

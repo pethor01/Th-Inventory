@@ -5,9 +5,8 @@ import { MDBJumbotron, MDBBtn, MDBContainer, MDBRow, MDBCol, MDBIcon, MDBCardBod
 import { useLocation } from 'react-router'
 
 export default  () => (
-  
   <>
-    <Navbar location={useLocation().pathname}/>
+  <Navbar location={useLocation().pathname}/>
   <MDBContainer className="mt-5 text-center">
     <MDBRow>
       <MDBCol>

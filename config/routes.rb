@@ -8,7 +8,7 @@ Rails.application.routes.draw do
       get 'store/:id', to: 'stores#show'
       post 'create_store', to: 'stores#create'
       put 'updateStore/:id', to: 'stores#update'
-
+      delete 'deleteStore/:id', to: 'stores#delete'
     end
   end
   get '/*path' => 'homepage#index'

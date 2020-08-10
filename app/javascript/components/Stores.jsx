@@ -4,8 +4,9 @@ import Store from "../components/Store"
 import CreateStore from "../components/CreateStore"
 import Pagination from "react-js-pagination";
 import Navbar from "../components/Navbar";
+import TropicalLogo from '../images/tropicalhut.jpg'
 import { useLocation } from 'react-router'
-import $ from "jquery";
+import {MDBContainer, MDBRow, MDBJumbotron, MDBIcon, MDBCol, MDBCard, MDBCardImage, MDBCardTitle, MDBCardBody, MDBCardText, MDBBtn } from 'mdbreact';
 
 
 export default function Stores (){
@@ -13,19 +14,17 @@ export default function Stores (){
   const [totalStores, setTotalStores] =  useState(0)
   const [activePage, SetActivePage] = useState(1)
   let location = useLocation()
+  const token = document.querySelector('meta[name="csrf-token"]').content;	
+
 
   function handleSubmit() {
     // Add the new created store in array
-    $("#exampleModal").modal("hide");
     getStores()
   }
 
   function handleUpdate(store) {
-    console.log('awit', store)
-    console.log(store.id)
     // /api/v1/updateStore/:id(.:format)
     const body = store
-    const token = document.querySelector('meta[name="csrf-token"]').content;	
     const url = `/api/v1/updateStore/${store.id}`
     fetch(url,{
       method: "PUT",
@@ -45,65 +44,61 @@ export default function Stores (){
         .catch(response => console.log(response))
   }
 
+  function handleDelete(storeId) {
+    const url = `/api/v1/deleteStore/${storeId}`
+    fetch(url,{
+      method: "DELETE",
+      headers: {
+        "X-CSRF-Token": token,
+        "Content-Type": "application/json"   
+      },
+      })
+      .then(() => {getStores()})
+  }
+
   function handlePageChange(pageNumber) {
     SetActivePage(pageNumber)
   }
 
-  function getTotalStores(){
-    const url = "/api/v1/totalStores"
-    fetch(url)
-      .then(response => {
-          if (response.ok){
-            return response.json();
-          }
-            throw new Error("Network response was not ok.");
-      })
-        .then(response => setTotalStores(response))
-        .catch(response => console.log(response));
-
-  }
-
+  
   function getStores(){
     try {
       const url = `/api/v1/stores?page=${activePage}`;
       fetch(url)
       .then(response => {
-          if (response.ok){
-            return response.json();
-          }
-            throw new Error("Network response was not ok.");
+        if (response.ok){
+          return response.json();
+        }
+          throw new Error("Network response was not ok.");
       })
-        .then(response => setStores(response))
+        .then(response => {setStores(response.stores), 
+              setTotalStores(response.total_stores)}
+             )
         .catch(response => console.log(response));
     } catch (error) {
       console.log(error)
     }
-    console.log(location.pathname)
   }
   useEffect(()=> {
-    getTotalStores()
     getStores()
   }, [activePage])
 
   const AllStores = stores.map((store, index) => (
-    <div key={index} className="col-md-6 col-lg-4">
-      <div className="card mb-4">
-        <h3 className="card-header"> {store.name}</h3>
-      <div className="card-body">
-        {store.address}
-        <div className="mt-3"> 
-          <Store dataStore={store} activePage={activePage} handleUpdate={handleUpdate} ></Store>
-        </div>
-      </div>
-      </div>
-    </div>
-  
+    <MDBCol key={index} className=" col-md-6 col-lg-4 mb-4">
+      <MDBCard>
+        <MDBCardBody>
+          <MDBCardTitle>{store.name}</MDBCardTitle>
+          <MDBCardText>{store.address}</MDBCardText>
+          <Store dataStore={store} activePage={activePage} handleUpdate={handleUpdate} handleDelete={handleDelete} ></Store>
+        </MDBCardBody>
+      </MDBCard>
+    </MDBCol>
   ));
   const NoStore = (
     <div className="vw-100 vh-50 d-flex align-items-center justify-content-center">
-    <h4>
-      No stores yet <Link to="/new_recipe">create one</Link>
-    </h4>
+      <h4>
+        No stores yet <Link to="/new_recipe" className="btn-outline-success">create one</Link>
+      </h4>
   </div>
 
   )
@@ -111,15 +106,25 @@ export default function Stores (){
   return(
     <>
       <Navbar location={location.pathname}/>
-      <section className="jumbotron jumbotron-fluid text-center">
-            <div className="container py-5">
-              <h1 className="display-4">Tropical Hut Stores</h1>
-              <p className="lead text-muted">
-                Inventory List of Tropical Hut Stores in the Philippines 
-              </p>
-            </div>
-      </section>
-      <div className="py-5">
+      <MDBContainer className="mt-5 text-center">
+        <MDBRow>
+          <MDBCol>
+            <MDBJumbotron className="text-center">
+              <MDBCardImage src={TropicalLogo} className="center img-fluid" waves/>
+              <MDBCardBody>
+                <MDBCardTitle className="indigo-text h5 m-4">
+                  Photography
+                </MDBCardTitle>
+                <MDBCardText>
+                  Sed ut perspiciatis unde omnis iste natus sit voluptatem
+                  accusantium doloremque laudantium, totam rem aperiam.
+                </MDBCardText>
+              </MDBCardBody>
+            </MDBJumbotron>
+          </MDBCol>
+      </MDBRow>
+    </MDBContainer>
+      <div className="">
         <main className="container">
           <div className="text-right mb-3">
               <CreateStore handleSubmit={handleSubmit}/>
@@ -130,19 +135,17 @@ export default function Stores (){
             <div>
               <Pagination
                 activePage={activePage}
-                itemsCountPerPage={10}
+                itemsCountPerPage={12}
                 totalItemsCount={totalStores}
                 pageRangeDisplayed={5}
                 onChange={handlePageChange}
               />
             </div>
-            <Link to="/" className="btn btn-outline-primary">
+            <Link to="/" className="btn btn-outline-primary waves-effect" >
               Home
             </Link>
           </main>
         </div>
-
-
     </>
   );
 

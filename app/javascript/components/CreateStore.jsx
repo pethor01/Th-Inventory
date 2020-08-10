@@ -1,39 +1,22 @@
-import React from "react"
-import { Link , withRouter} from "react-router-dom"
-import Stores from "../components/Stores";
+import React, {useState} from 'react'
+import { MDBInput, MDBContainer, MDBRow, MDBCol, MDBModal, MDBModalHeader, MDBModalBody, MDBBtn, MDBModalFooter } from 'mdbreact';
 
+export default function NewStore ({ handleSubmit}){
+    const [name, SetName] = useState("")
+    const [contactNo, SetContactNo] = useState("")
+    const [address, SetAddress] = useState("")
+    const [isOpen, SetIsOpen] = useState(false)
 
-
-class NewStore extends React.Component{
-    constructor(props){
-        super(props)
-        this.state = {
-            name: "",
-            address: "",
-            contact_no: "",
-            numbersOnly: ""
-        };
-        
-        this.onChange = this.onChange.bind(this);
-        this.submitStore = this.submitStore.bind(this);
+    function toggle() {
+        SetIsOpen(!isOpen)
     }
 
-    handleNumbersOnly(evt) {
-        const contact_no = (evt.target.validity.valid) ? evt.target.value : this.state.contact_no;
-        this.setState({ contact_no });
-    }
-
-    onChange(event) {
-        this.setState({ [event.target.name]: event.target.value });
-    }
-    
-    submitStore(event){
+    function submitStore(event){
         event.preventDefault();
         const url = "/api/v1/create_store";
-        const { name, address, contact_no} = this.state
-        if (name.length == 0 || address.length == 0 || contact_no.length == 0) 
+        if (name.length == 0 || address.length == 0 || contactNo.length == 0) 
             return;
-        const body = {name, address, contact_no};
+        const body = {name: name, address: address, contact_no: contactNo};
         const token = document.querySelector('meta[name="csrf-token"]').content;
         fetch(url,{
             method: "POST",
@@ -44,61 +27,46 @@ class NewStore extends React.Component{
             body: JSON.stringify(body)
 
         }).then(response => {
-                if (response.ok) {
-                    return response.json();
+            if (response.ok) {
+                return response.json();
 
-                }
+            }
                 throw new Error("Network Response Erros");
         })
-            .then(response => this.props.handleSubmit(response))
+            .then(response => handleSubmit(response))
             .catch(error => console.log(error.message));  
         event.target.reset();
-        this.setState({contact_no: ""})
+        SetContactNo("")
+        toggle()
     }
-    render(){
-        return(
-            <>
-                <button className="btn btn-outline-success" data-toggle="modal" data-target="#exampleModal">
-                    Create New Store
-                </button>
-                <div className="modal" id="exampleModal" role="dialog" aria-labelledby="exampleModalCenteredLabel" aria-hidden="true">
-                    <div className="modal-dialog modal-dialog-centered" role="document">
-                        <div className="modal-content">
-                            <form onSubmit={this.submitStore} >
-                            <div className="modal-header">
-                                <h5 className="modal-title" id="StoreModalTitle">Create Store</h5>
-                                <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div className="modal-body">
-                                    <div className="container ">
-                                        <div className=" row form-group ">
-                                            <label htmlFor="store_name">Store Name:</label>
-                                            <input type="text" id="store_name" name="name" className="form-control" onChange={this.onChange} required/>
+
+    return(
+        <>
+            <button className="btn btn-outline-success" onClick={toggle}>
+                Create New Store
+            </button>
+            <MDBModal isOpen={isOpen} toggle={toggle} size="md" >
+                <form  onSubmit={submitStore}>
+                    <MDBModalHeader toggle={toggle}>Create Store</MDBModalHeader>
+                        <MDBModalBody>
+                            <MDBContainer>
+                                <MDBRow>
+                                    <MDBCol md="12">
+                                        <div >
+                                            <MDBInput label="Store name" type="text"  onChange={(e)=> SetName(e.target.value)} required />
+                                            <MDBInput id="storeAddress" type="textarea" label="Store Address:"  rows="3"  onChange={(e)=> SetAddress(e.target.value)} required/>
+                                            <MDBInput id="contactNo" type="text" label="Contact Number:"  onChange={(event) => SetContactNo(event.target.value.replace(/\D/,''))} name="contact_no" required/>
                                         </div>
-                                        <div className=" row form-group ">
-                                            <label htmlFor="store_address">Store Address:</label>
-                                            <textarea id="store_address" name="address" type="text" className="form-control" required onChange={this.onChange}/>
-                                        </div>
-                                        <div className=" row form-group ">
-                                            <label htmlFor="contact_no">Contact Number:</label>
-                                            <input type="text" id="contact_no" name="contact_no" pattern="[0-9]*" value={this.state.contact_no} onChange={event => this.setState({contact_no: event.target.value.replace(/\D/,'')})} name="contact_no" className="form-control" required/>
-                                        </div>
-                                    </div>
-                            </div>
-                            <div id="btnOption" className="modal-footer">
-                                <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="submit" className="btn btn-success">Save</button>
-                            </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </>
-        )
-    }
+                                    </MDBCol>
+                                </MDBRow>
+                            </MDBContainer>
+                        </MDBModalBody>
+                    <MDBModalFooter>
+                        <MDBBtn color="blue-grey"  onClick={toggle}>Close</MDBBtn>
+                        <button type="submit" className="btn btn-success">Save</button>
+                    </MDBModalFooter>
+                </form>
+            </MDBModal>
+        </>
+    )
 }
-
-export default NewStore;
-
