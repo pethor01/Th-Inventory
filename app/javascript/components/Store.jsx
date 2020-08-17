@@ -101,7 +101,7 @@ export default function Store ({ dataStore, handleUpdate, handleDelete }){
                 <div>{isOpen ?  deleteStoreModal : ''}</div>
                 <div>
                     <MDBBtn color="info"  onClick={showClicked}>View</MDBBtn>
-                    <CreateService />
+                    <CreateService storeDtls={dataStore} />
                 </div>
             </>
         )
